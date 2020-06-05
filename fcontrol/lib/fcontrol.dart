@@ -1,97 +1,7 @@
 import 'package:flutter/material.dart';
 import 'finnershadow.dart';
+import 'fcontroldefine.dart';
 
-class FShapeEffects{
-  final ControlShape shape;
-  final BorderRadiusGeometry borderRadius;
-  final BorderSide side;
-
-  const FShapeEffects({
-    this.shape:ControlShape.RoundedRectangle,
-    this.borderRadius:const BorderRadius.all(Radius.circular(10)),
-    this.side:const BorderSide(color: Colors.transparent, style: BorderStyle.solid, width: 1), 
-  });
-}
-
-class FShadowEffects{
-  Color highlightColor;
-  double highlightDistance;
-  double highlightBlur;
-  double highlightSpread;
-
-  Color shadowColor;
-  double shadowDistance;
-  double shadowBlur;
-  double shadowSpread;
-
-  FShadowEffects({
-    this.highlightColor = Colors.white,
-    this.highlightDistance = 5,
-    this.highlightBlur = 10,
-    this.highlightSpread = 2,
-    this.shadowColor = Colors.black,
-    this.shadowDistance = 5,
-    this.shadowBlur = 10,
-    this.shadowSpread = 2,
-  });
-}
-
-typedef FGroupContorllerClickCallback = List<Color> Function(Widget stateChanged,bool selected,List<Widget> widgets);
-
-class FGroupController{
-  final List<State> states = List();
-  final FGroupContorllerClickCallback groupClickCallback;
-  final bool mustBeSelected;
-
-  FGroupController({
-    this.mustBeSelected = false, 
-    this.groupClickCallback
-  });
-}
-
-enum LightOrientation{
-  LeftTop,
-  LeftBottom,
-  RightTop,
-  RightBottom,
-}
-
-enum ControlShape{
-  RoundedRectangle,
-  ContinuousRectangle,
-  BeveledRectangle,
-}
-
-enum SurfaceShape{
-  Flat, //平面
-  Convex, //凸面
-  Concave, //凹面
-}
-
-enum FControlState{
-  Normal,
-  Highlight,
-  Disable,
-}
-
-enum FControlAppearance{
-  Flat,
-  Neumorphism,
-  Material,
-}
-
-enum FControlType{
-  Button,
-  Toggle,
-}
-
-typedef FControlBackgroundColorForStateCallback = List<Color> Function(Widget sender,FControlState state);
-typedef FControlBorderForStateCallback = Border Function(Widget sender,FControlState state);
-typedef FControlChildForStateCallback = Widget Function(Widget sender,FControlState state);
-typedef FControlTapEventForStateCallback = void Function(Widget sender,FControlState state,bool isSelected);
-typedef FControlClickEventCallback = void Function(Widget sender,bool isSelected);
-typedef FControlShapeForStateCallback = FShapeEffects Function(Widget sender, FControlState state);
-typedef FControlSurfaceForStateCallback = SurfaceShape Function(Widget sender, FControlState state);
 
 class FControl extends StatefulWidget{
   
@@ -99,12 +9,12 @@ class FControl extends StatefulWidget{
   final double width;                                                     //组件宽
   final double height;                                                    //组件高
 
-  final LightOrientation lightOrientation;                                //光源方向
+  final FLightOrientation lightOrientation;                                //光源方向
   
   final List<Color> backgroundColors;                                     //背景颜色
   final FControlBackgroundColorForStateCallback backgroundColorsCallback; //背景颜色callback
 
-  final SurfaceShape surfaceShape;                                        //表面形状
+  final FSurfaceShape surfaceShape;                                        //表面形状
   final FControlSurfaceForStateCallback surfaceShapeCallback;             //表面形状callback
 
   final Widget child;                                                     //子组件
@@ -137,7 +47,7 @@ class FControl extends StatefulWidget{
 
   const FControl({
     Key key, 
-    this.lightOrientation = LightOrientation.LeftTop, 
+    this.lightOrientation = FLightOrientation.LeftTop, 
     this.width, 
     this.height, 
     this.margin = EdgeInsets.zero, 
@@ -146,7 +56,7 @@ class FControl extends StatefulWidget{
     this.backgroundColors = const [Colors.red,Colors.purple], 
     this.backgroundColorsCallback, 
 
-    this.surfaceShape = SurfaceShape.Flat, 
+    this.surfaceShape = FSurfaceShape.Flat, 
     this.surfaceShapeCallback,
 
     this.child, 
@@ -191,8 +101,8 @@ class _FControlState extends State<FControl>{
   FShapeEffects defaultShape;
   FShapeEffects currentShape;
 
-  SurfaceShape defaultSurface;
-  SurfaceShape currentSurface;
+  FSurfaceShape defaultSurface;
+  FSurfaceShape currentSurface;
 
 
   bool isSelected;
@@ -341,12 +251,12 @@ class _FControlState extends State<FControl>{
       currentShape = defaultShape;
     }
     switch (currentShape.shape) {
-      case ControlShape.BeveledRectangle:
+      case FBorderShape.BeveledRectangle:
         return BeveledRectangleBorder(
           borderRadius: currentShape.borderRadius,
           side: justShape?BorderSide(color: Colors.transparent, width: 0):currentShape.side,
         );
-      case ControlShape.ContinuousRectangle:
+      case FBorderShape.ContinuousRectangle:
         return ContinuousRectangleBorder(
           borderRadius: currentShape.borderRadius,
           side: justShape?BorderSide(color: Colors.transparent,width: 0):currentShape.side,
@@ -443,7 +353,7 @@ class _FControlState extends State<FControl>{
 
   List<BoxShadow> createDropShadowList(FControlAppearance appearance,
                                        FControlState state,
-                                       LightOrientation lightOrientation,
+                                       FLightOrientation lightOrientation,
                                        FShadowEffects dropShadowEffect,
                                        bool canUseShadow){
     List<BoxShadow> shadows = List();
@@ -486,7 +396,7 @@ class _FControlState extends State<FControl>{
 
   Widget createChildContainer(FControlAppearance appearance,
                               FControlState state,
-                              LightOrientation lightOrientation,
+                              FLightOrientation lightOrientation,
                               FShadowEffects innerShadow){
     
     switch (appearance) {
@@ -580,7 +490,7 @@ class _FControlState extends State<FControl>{
   }
 
   Offset dropShadowOffset(FControlAppearance appearance,      //外观风格
-                          LightOrientation lightOrientation,  //光源方向，在FControlAppearance.Flat时无效
+                          FLightOrientation lightOrientation,  //光源方向，在FControlAppearance.Flat时无效
                           FControlState state,                //控件状态
                           bool isHighlight,                   //当前是否处理高光，仅在FControlAppearance.Neumorphism时有效
                           FShadowEffects shadowEffect){       //光影效果定义，仅在FControlAppearance.Neumorphism且isHighlight=true时处理高光
@@ -590,7 +500,7 @@ class _FControlState extends State<FControl>{
       return Offset.zero;
     }
     switch(lightOrientation){
-      case LightOrientation.LeftTop:
+      case FLightOrientation.LeftTop:
         if(appearance == FControlAppearance.Material){
           offset = Offset(shadowEffect.shadowDistance,shadowEffect.shadowDistance);
         }else{ //FControlAppearance.Neumorphism
@@ -598,7 +508,7 @@ class _FControlState extends State<FControl>{
                               :Offset(shadowEffect.shadowDistance,shadowEffect.shadowDistance);
         }
         return offset;
-      case LightOrientation.LeftBottom:
+      case FLightOrientation.LeftBottom:
         if(appearance == FControlAppearance.Material){
           offset = Offset(shadowEffect.shadowDistance, -shadowEffect.shadowDistance);
         }else{ //FControlAppearance.Neumorphism
@@ -606,7 +516,7 @@ class _FControlState extends State<FControl>{
                               :Offset(shadowEffect.shadowDistance,-shadowEffect.shadowDistance);
         }
         return offset;
-      case LightOrientation.RightTop:
+      case FLightOrientation.RightTop:
         if(appearance == FControlAppearance.Material){
           offset = Offset(-shadowEffect.shadowDistance, shadowEffect.shadowDistance);
         }else{ //FControlAppearance.Neumorphism
@@ -614,7 +524,7 @@ class _FControlState extends State<FControl>{
                               :Offset(-shadowEffect.shadowDistance,shadowEffect.shadowDistance);
         }
         return offset;
-      case LightOrientation.RightBottom:
+      case FLightOrientation.RightBottom:
         if(appearance == FControlAppearance.Material){
           offset = Offset(-shadowEffect.shadowDistance, -shadowEffect.shadowDistance);
         }else{ //FControlAppearance.Neumorphism
@@ -636,14 +546,14 @@ class _FControlState extends State<FControl>{
     }
   }
 
-  Offset innerShadowOffset(LightOrientation lightOrientation,
+  Offset innerShadowOffset(FLightOrientation lightOrientation,
                            bool isBacklight,
                            FControlState state,
                            FShadowEffects innerShadow){
     double forwardlightDistance = innerShadow.highlightDistance.abs();
     double backlightDistance = innerShadow.shadowDistance.abs();
     switch(lightOrientation){
-      case LightOrientation.LeftTop:
+      case FLightOrientation.LeftTop:
       {
         Offset offset = isBacklight?Offset(backlightDistance, backlightDistance):Offset(-forwardlightDistance, -forwardlightDistance);
         if(state == FControlState.Normal || state == FControlState.Disable){
@@ -651,7 +561,7 @@ class _FControlState extends State<FControl>{
         }
         return offset;
       } 
-      case LightOrientation.LeftBottom:
+      case FLightOrientation.LeftBottom:
       {
         Offset offset = isBacklight?Offset(backlightDistance, -backlightDistance):Offset(-forwardlightDistance, forwardlightDistance);
         if(controlState == FControlState.Normal || controlState == FControlState.Disable){
@@ -659,7 +569,7 @@ class _FControlState extends State<FControl>{
         }
         return offset;
       }
-      case LightOrientation.RightTop:
+      case FLightOrientation.RightTop:
       {
         Offset offset = isBacklight?Offset(-backlightDistance, backlightDistance):Offset(forwardlightDistance,-forwardlightDistance);
         if(controlState == FControlState.Normal || controlState == FControlState.Disable){
@@ -667,7 +577,7 @@ class _FControlState extends State<FControl>{
         }
         return offset;
       }
-      case LightOrientation.RightBottom:
+      case FLightOrientation.RightBottom:
       {
         Offset offset = isBacklight?Offset(-backlightDistance,-backlightDistance):Offset(forwardlightDistance,forwardlightDistance);
         if(controlState == FControlState.Normal || controlState == FControlState.Disable){
@@ -679,19 +589,19 @@ class _FControlState extends State<FControl>{
     return isBacklight?Offset(backlightDistance, backlightDistance):Offset(-forwardlightDistance, -forwardlightDistance);
   }
 
-  Widget createSurfaceShapeShadow(LightOrientation lightOrientation){
+  Widget createSurfaceShapeShadow(FLightOrientation lightOrientation){
     
     Color surfaceShadowColor = Colors.black26;
     switch(currentSurface){
-      case SurfaceShape.Flat:
+      case FSurfaceShape.Flat:
         return Container(
               decoration: ShapeDecoration(
                         shape: createShapeBorder(controlState,true),
                       ),
             );
-      case SurfaceShape.Convex:{
+      case FSurfaceShape.Convex:{
         switch(lightOrientation){
-          case LightOrientation.LeftTop:
+          case FLightOrientation.LeftTop:
             return Container(
               decoration: ShapeDecoration(
                         shape: createShapeBorder(controlState,true),
@@ -702,7 +612,7 @@ class _FControlState extends State<FControl>{
                   end:Alignment.bottomRight),
               ),
             );
-          case LightOrientation.LeftBottom:
+          case FLightOrientation.LeftBottom:
             return Container(
               decoration: ShapeDecoration(
                         shape: createShapeBorder(controlState,true),
@@ -713,7 +623,7 @@ class _FControlState extends State<FControl>{
                   end:Alignment.topRight),
               ),
             );
-          case LightOrientation.RightTop:
+          case FLightOrientation.RightTop:
             return Container(
               decoration: ShapeDecoration(
                         shape: createShapeBorder(controlState,true),
@@ -724,7 +634,7 @@ class _FControlState extends State<FControl>{
                   end:Alignment.bottomLeft),
               ),
             );
-          case LightOrientation.RightBottom:
+          case FLightOrientation.RightBottom:
             return Container(
               decoration: ShapeDecoration(
                         shape: createShapeBorder(controlState,true),
@@ -747,9 +657,9 @@ class _FControlState extends State<FControl>{
               ),
             );
       }
-      case SurfaceShape.Concave:{
+      case FSurfaceShape.Concave:{
         switch(lightOrientation){
-          case LightOrientation.LeftTop:
+          case FLightOrientation.LeftTop:
             return Container(
               decoration: ShapeDecoration(
                         shape: createShapeBorder(controlState,true),
@@ -759,7 +669,7 @@ class _FControlState extends State<FControl>{
                   end:Alignment.bottomRight),
               ),
             );
-          case LightOrientation.LeftBottom:
+          case FLightOrientation.LeftBottom:
             return Container(
               decoration: ShapeDecoration(
                         shape: createShapeBorder(controlState,true),
@@ -769,7 +679,7 @@ class _FControlState extends State<FControl>{
                   end:Alignment.topRight),
               ),
             );
-          case LightOrientation.RightTop:
+          case FLightOrientation.RightTop:
             return Container(
                decoration: ShapeDecoration(
                         shape: createShapeBorder(controlState,true),
@@ -779,7 +689,7 @@ class _FControlState extends State<FControl>{
                   end:Alignment.bottomLeft),
               ),
             );
-          case LightOrientation.RightBottom:
+          case FLightOrientation.RightBottom:
             return Container(
               decoration: ShapeDecoration(
                         shape: createShapeBorder(controlState,true),

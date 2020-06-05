@@ -2,6 +2,8 @@
 import 'package:fcontrol/fcontrol.dart';
 import 'package:flutter/material.dart';
 
+import 'fcontroldefine.dart';
+
 
 void main() {
   // debugProfilePaintsEnabled = true; 
@@ -32,8 +34,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   double fcontrolsize = 200;
-  LightOrientation lightOrientation = LightOrientation.LeftTop;
-  SurfaceShape surfaceShape = SurfaceShape.Flat;
+  FLightOrientation lightOrientation = FLightOrientation.LeftTop;
+  FSurfaceShape surfaceShape = FSurfaceShape.Flat;
   FControlAppearance controlAppearance = FControlAppearance.Neumorphism;
   FControlType controlType = FControlType.Button;
   FGroupController controlController = FGroupController();
