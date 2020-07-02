@@ -1,30 +1,32 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-class InnerShadow extends SingleChildRenderObjectWidget {
-  const InnerShadow({
-    Key key,
-    this.blur = 10,
-    this.color = Colors.black38,
-    this.offset = const Offset(10, 10),
-    Widget child,
-  }) : super(key: key, child: child);
+import 'package:fcontrol/fdefine.dart';
 
+class FInnerShadow extends SingleChildRenderObjectWidget {
   final double blur;
   final Color color;
   final Offset offset;
+  FInnerShadow({
+    Key key,
+    this.blur = 10,
+    this.color = FInnerShadowColor,
+    this.offset = FInnerShadowOffset,
+    Widget child,
+  }) : super(key: key, child: child);
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    final _RenderInnerShadow renderObject = _RenderInnerShadow();
+    final _ZenUIRenderInnerShadow renderObject = _ZenUIRenderInnerShadow();
     updateRenderObject(context, renderObject);
     return renderObject;
   }
 
   @override
   void updateRenderObject(
-      BuildContext context, _RenderInnerShadow renderObject) {
+      BuildContext context, _ZenUIRenderInnerShadow renderObject) {
     renderObject
       ..color = color
       ..blur = blur
@@ -33,7 +35,7 @@ class InnerShadow extends SingleChildRenderObjectWidget {
   }
 }
 
-class _RenderInnerShadow extends RenderProxyBox {
+class _ZenUIRenderInnerShadow extends RenderProxyBox {
   double blur;
   Color color;
   double dx;
@@ -49,16 +51,13 @@ class _RenderInnerShadow extends RenderProxyBox {
       size.width,
       size.height,
     );
-    // final RRect rectInner = RRect.fromLTRBR(offset.dx, offset.dy, size.width, size.height, Radius.circular(10));
     final Canvas canvas = context.canvas..saveLayer(rectOuter, Paint());
     context.paintChild(child, offset);
-    final Paint shadowPaint = Paint()
+    Paint shadowPaint = Paint()
       ..blendMode = BlendMode.srcATop
       ..imageFilter = ImageFilter.blur(sigmaX: blur, sigmaY: blur)
       ..colorFilter = ColorFilter.mode(color, BlendMode.srcOut);
-
     canvas
-      // ..drawRRect(RRect.fromLTRBR(offset.dx, offset.dy, size.width, size.height, Radius.circular(10)), shadowPaint)
       ..saveLayer(rectOuter, shadowPaint)
       ..saveLayer(rectInner, Paint())
       ..translate(dx, dy);
