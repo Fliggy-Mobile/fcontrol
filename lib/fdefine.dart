@@ -24,6 +24,7 @@ class FShadow {
   final double shadowDistance;
   final double shadowBlur;
   final double shadowSpread;
+  final Offset shadowOffset;
 
   const FShadow({
     this.highlightColor = FHighlightShadowColor,
@@ -34,7 +35,43 @@ class FShadow {
     this.shadowDistance = 3,
     this.shadowBlur = 6,
     this.shadowSpread = 1,
+    this.shadowOffset,
   });
+}
+
+/// 为组件设置边角。
+///
+/// Set corners for widget
+class FCorner {
+  final double leftTopCorner;
+  final double rightTopCorner;
+  final double rightBottomCorner;
+  final double leftBottomCorner;
+
+  const FCorner({
+    this.leftTopCorner = 0,
+    this.rightTopCorner = 0,
+    this.rightBottomCorner = 0,
+    this.leftBottomCorner = 0,
+  });
+
+  FCorner.all(double radius)
+      : leftTopCorner = radius,
+        rightTopCorner = radius,
+        rightBottomCorner = radius,
+        leftBottomCorner = radius;
+}
+
+/// 边角风格。
+/// [round] - 圆角
+/// [bevel] - 斜角
+///
+/// Rounded corner style.
+/// [round]-rounded corners
+/// [bevel]-beveled corners
+enum FCornerStyle {
+  round,
+  bevel,
 }
 
 typedef FGroupContorllerClickCallback = List<Color> Function(

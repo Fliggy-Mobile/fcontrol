@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'fdefine.dart';
 
 import 'finnershadow.dart';
@@ -71,6 +73,8 @@ class FControl extends StatefulWidget {
   final FOnTapDownCallback onTapDownCallback;
   final FOnTapUpCallback onTapUpCallback;
   final FOnTapCancelCallback onTapCancelCallback;
+  final ValueChanged<bool> onHover;
+  final Color hoverColor;
 
   const FControl({
     Key key,
@@ -104,7 +108,9 @@ class FControl extends StatefulWidget {
     this.onTapCallback,
     this.onTapDownCallback,
     this.onTapUpCallback,
-    this.onTapCancelCallback,
+    this.onTapCancelCallback, 
+    this.onHover, 
+    this.hoverColor,
   }) : super(key: key);
 
   @override
@@ -146,7 +152,20 @@ class FControlState extends State<FControl> {
 
   Color maskColor;
 
+  bool _hovering = false;
+
+  MouseCursor effectiveMouseCursor;
+
+  @override
   void initState() {
+    effectiveMouseCursor = MaterialStateProperty.resolveAs<MouseCursor>(
+      MaterialStateMouseCursor.clickable,
+      <MaterialState>{
+        if (disabled) MaterialState.disabled,
+        if (_hovering) MaterialState.hovered,
+//        if (_hasFocus) MaterialState.focused,
+      },
+    );
     controlState = FState.Normal;
     appearance = widget.appearance ?? FAppearance.Flat;
     supportDropShadow = widget.supportDropShadow ?? true;
@@ -182,6 +201,7 @@ class FControlState extends State<FControl> {
     if (widget.gradientForCallback != null) {
       currentGradient = widget.gradientForCallback(widget, controlState);
     }
+    currentGradient = currentGradient ?? defaultGradient;
 
     // if (widget.backgroundColorsForCallback != null) {
     //   currentBackgroundColors =
@@ -224,81 +244,100 @@ class FControlState extends State<FControl> {
     if (widget.userInteractive == false) {
       return createCoreControl();
     }
-    return GestureDetector(
-      onTapDown: (details) {
-        if (controlType == FType.Button) {
-          controlState = FState.Highlighted;
-        } else {
-          if (widget.controller != null &&
-              widget.controller.mustBeSelected &&
-              isSelected) {
-            return;
-          }
-          isSelected = !isSelected;
-          controlState = FState.Highlighted;
-        }
-        _controlGestureHandlerForState();
-        if (widget.onTapDownCallback != null) {
-          widget.onTapDownCallback(widget, isSelected);
-        }
-      },
-      onTapUp: (details) {
-        if (widget.onTapUpCallback != null) {
-          widget.onTapUpCallback(widget, isSelected);
-        }
-      },
-      onTapCancel: () {
-        if (controlType == FType.Button) {
-          controlState = FState.Normal;
-        } else {
-          controlState =
-          isSelected ? FState.Highlighted : FState.Normal;
-        }
-        _controlGestureHandlerForState();
-        if (widget.onTapCancelCallback != null) {
-          widget.onTapCancelCallback(widget, isSelected);
-        }
-      },
-      onTap: () {
-        if (controlType == FType.Button) {
-          controlState = FState.Normal;
-          _controlGestureHandlerForState();
-        } else {
-          controlState =
-          isSelected ? FState.Highlighted : FState.Normal;
-          if (widget.controller != null &&
-              widget.controller.states.length > 0) {
-            List<Widget> all = List();
-            Widget changed;
-            for (int i = 0; i < widget.controller.states.length; i++) {
-              FControlState state = widget.controller.states[i];
-              all.add(state.widget);
-              if (state != this) {
-                if (state.isSelected == false &&
-                    state.controlState == FState.Normal) {
-                  continue;
-                }
-                state.isSelected = false;
-                state.controlState = FState.Normal;
-                state._controlGestureHandlerForState();
-              } else {
-                changed = this.widget;
-                _controlGestureHandlerForState();
-              }
-            }
-            if (widget.controller.groupClickCallback != null) {
-              widget.controller.groupClickCallback(changed, isSelected, all);
-            }
+    return MouseRegion(
+      cursor: effectiveMouseCursor,
+      onEnter: _handleMouseEnter,
+      onExit: _handleMouseExit,
+      child: GestureDetector(
+        onTapDown: (details) {
+          if (controlType == FType.Button) {
+            controlState = FState.Highlighted;
           } else {
-            _controlGestureHandlerForState();
+            if (widget.controller != null &&
+                widget.controller.mustBeSelected &&
+                isSelected) {
+              return;
+            }
+            isSelected = !isSelected;
+            controlState = FState.Highlighted;
           }
-        }
-        if (widget.onTapCallback != null) {
-          widget.onTapCallback(widget, isSelected);
-        }
-      },
-      child: createCoreControl(),
+          _controlGestureHandlerForState();
+          if (widget.onTapDownCallback != null) {
+            widget.onTapDownCallback(widget, isSelected);
+          }
+        },
+        onTapUp: (details) {
+          if (widget.onTapUpCallback != null) {
+            widget.onTapUpCallback(widget, isSelected);
+          }
+        },
+        onTapCancel: () {
+          if (controlType == FType.Button) {
+            controlState = FState.Normal;
+          } else {
+            controlState =
+            isSelected ? FState.Highlighted : FState.Normal;
+          }
+          _controlGestureHandlerForState();
+          if (widget.onTapCancelCallback != null) {
+            widget.onTapCancelCallback(widget, isSelected);
+          }
+        },
+        onTap: () {
+          if (controlType == FType.Button) {
+            controlState = FState.Normal;
+            _controlGestureHandlerForState();
+          } else {
+            controlState =
+            isSelected ? FState.Highlighted : FState.Normal;
+            if (widget.controller != null &&
+                widget.controller.states.length > 0) {
+              List<Widget> all = List();
+              Widget changed;
+              for (int i = 0; i < widget.controller.states.length; i++) {
+                FControlState state = widget.controller.states[i];
+                all.add(state.widget);
+                if (state != this) {
+                  if (state.isSelected == false &&
+                      state.controlState == FState.Normal) {
+                    continue;
+                  }
+                  state.isSelected = false;
+                  state.controlState = FState.Normal;
+                  state._controlGestureHandlerForState();
+                } else {
+                  changed = this.widget;
+                  _controlGestureHandlerForState();
+                }
+              }
+              if (widget.controller.groupClickCallback != null) {
+                widget.controller.groupClickCallback(changed, isSelected, all);
+              }
+            } else {
+              _controlGestureHandlerForState();
+            }
+          }
+          if (widget.onTapCallback != null) {
+            widget.onTapCallback(widget, isSelected);
+          }
+        },
+        child: createCoreControl(),
+      ),
     );
+  }
+
+  void _handleMouseEnter(PointerEnterEvent event) => _handleHoverChange(true);
+  
+  void _handleMouseExit(PointerExitEvent event) => _handleHoverChange(false);
+  
+  void _handleHoverChange(bool hovering) {
+    if (_hovering != hovering) {
+      _hovering = hovering;
+      widget.onHover?.call(_hovering);
+    }
+    if (widget.hoverColor != null) {
+      _controlGestureHandlerForState();
+    }
   }
 
   //============> 工具函数
@@ -392,32 +431,38 @@ class FControlState extends State<FControl> {
 
   //统一处理手势操作
   void _controlGestureHandlerForState() {
+    _updateState();
+    setState(() {});
+  }
+
+  void _updateState() {
     if (widget.colorForCallback != null) {
       currentColor =
           widget.colorForCallback(widget, controlState) ?? defaultColor;
+      if (controlState == FState.Normal && widget.hoverColor != null && _hovering) {
+          currentColor = widget.hoverColor;
+      }
     }
-
+    
     if (widget.gradientForCallback != null) {
       currentGradient =
           widget.gradientForCallback(widget, controlState) ?? defaultGradient;
     }
-
+    
     if (widget.childForStateCallback != null) {
       currentWidget =
           widget.childForStateCallback(widget, controlState) ?? defaultWidget;
     }
-
+    
     if (widget.surfaceForCallback != null) {
       currentSurface =
           widget.surfaceForCallback(widget, controlState) ?? defaultSurface;
     }
-
+    
     if (widget.shapeForStateCallback != null) {
       currentShape =
           widget.shapeForStateCallback(widget, controlState) ?? defaultShape;
     }
-
-    setState(() {});
   }
 
   //处理边框
@@ -464,9 +509,9 @@ class FControlState extends State<FControl> {
         }
         shadows.add(BoxShadow(
           color: dropShadow.shadowColor,
-          offset: _dropShadowOffset(
+          offset: dropShadow.shadowOffset ?? _dropShadowOffset(
               appearance, lightOrientation, state, true, dropShadow),
-          blurRadius: dropShadow.shadowDistance,
+          blurRadius: dropShadow.shadowBlur,
           spreadRadius: dropShadow.shadowSpread,
         ));
         break;
@@ -722,26 +767,45 @@ class FControlState extends State<FControl> {
 
   //============> 重载部分生存周期函数，用于不同状态的变化响应
   void didUpdateWidget(FControl oldWidget) {
-    appearance = widget.appearance ?? FAppearance.Flat;
-    defaultWidget = widget.child;
-    defaultColor = widget.color ?? FPrimerColor;
-    defaultGradient = widget.gradient;
-    if (controlState == FState.Normal) {
-      currentWidget = defaultWidget;
-      currentColor = defaultColor;
-      currentGradient = defaultGradient;
-    }
-
-    currentWidget = currentWidget ?? defaultWidget;
-    currentGradient = currentGradient ?? defaultGradient;
-    currentColor = currentColor ?? defaultColor;
-    // defaultBackgroundColors = widget.backgroundColors ?? [FPrimerColor];
     disabled = widget.disabled ?? false;
+    defaultColor = widget.color;
     if (disabled) {
       controlState = FState.Disable;
       defaultColor = FDisableColor;
       // defaultBackgroundColors = [FDisableColor, FDisableColor];
+    } else if (controlType == FType.Toggle) {
+      controlState = isSelected ? FState.Highlighted : FState.Normal;
+      _updateState();
+    } else if(controlState == FState.Disable){
+      controlState = FState.Normal;
     }
+    if(widget.colorForCallback != null){
+      defaultColor = widget.colorForCallback(widget, controlState) ?? widget.color;
+    }
+    defaultColor = defaultColor ?? FPrimerColor;
+    appearance = widget.appearance ?? FAppearance.Flat;
+    defaultWidget = widget.child;
+    defaultGradient = widget.gradient;
+    if (controlState == FState.Normal) {
+//      currentWidget = defaultWidget;
+//      currentColor = defaultColor;
+      currentGradient = defaultGradient;
+    }
+    currentWidget = defaultWidget;
+    if(widget.childForStateCallback != null){
+      currentWidget = widget.childForStateCallback(widget, controlState);
+    }
+    currentWidget = currentWidget ?? defaultWidget;
+    currentGradient = currentGradient ?? defaultGradient;
+//    currentColor = currentColor ?? defaultColor;
+    currentColor = defaultColor;
+    // defaultBackgroundColors = widget.backgroundColors ?? [FPrimerColor];
+//    disabled = widget.disabled ?? false;
+//    if (disabled) {
+//      controlState = FState.Disable;
+//      defaultColor = FDisableColor;
+//      // defaultBackgroundColors = [FDisableColor, FDisableColor];
+//    }
     defaultShape = widget.shape ?? FShape();
     supportDropShadow = widget.supportDropShadow ?? true;
     maskColor = widget.maskColor ?? Colors.black12;
@@ -750,14 +814,14 @@ class FControlState extends State<FControl> {
     controlType = widget.controlType ?? FType.Button;
     currentSurface = widget.surface ?? FSurface.Flat;
 
-    if (controlType == FType.Toggle) {
-      controlState = isSelected ? FState.Highlighted : FState.Normal;
-      _controlGestureHandlerForState();
-    }
+//    if (controlType == FType.Toggle) {
+//      controlState = isSelected ? FState.Highlighted : FState.Normal;
+//      _controlGestureHandlerForState();
+//    }
 
-    if (disabled) {
-      controlState = FState.Disable;
-    }
+//    if (disabled) {
+//      controlState = FState.Disable;
+//    }
 
     if (widget.surfaceForCallback != null) {
       currentSurface = widget.surfaceForCallback(widget, controlState);
