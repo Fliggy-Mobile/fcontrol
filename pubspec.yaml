@@ -25,15 +25,15 @@ flutter:
   # The 'pluginClass' and Android 'package' identifiers should not ordinarily
   # be modified. They are used by the tooling to maintain consistency when
   # adding or updating assets for this project.
-  plugin:
-    platforms:
-      android:
-        package: com.example.fcontrol
-        pluginClass: FcontrolPlugin
-      ios:
-        pluginClass: FcontrolPlugin
-      macos:
-        pluginClass: FcontrolPlugin
+#  plugin:
+#    platforms:
+#      android:
+#        package: com.example.fcontrol
+#        pluginClass: FcontrolPlugin
+#      ios:
+#        pluginClass: FcontrolPlugin
+#      macos:
+#        pluginClass: FcontrolPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
