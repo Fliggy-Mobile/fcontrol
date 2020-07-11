@@ -767,6 +767,8 @@ class FControlState extends State<FControl> {
 
   //============> 重载部分生存周期函数，用于不同状态的变化响应
   void didUpdateWidget(FControl oldWidget) {
+    isSelected = widget.isSelected ?? false;
+    controlType = widget.controlType ?? FType.Button;
     disabled = widget.disabled ?? false;
     defaultColor = widget.color;
     if (disabled) {
@@ -809,9 +811,9 @@ class FControlState extends State<FControl> {
     defaultShape = widget.shape ?? FShape();
     supportDropShadow = widget.supportDropShadow ?? true;
     maskColor = widget.maskColor ?? Colors.black12;
-    isSelected = widget.isSelected ?? false;
+//    isSelected = widget.isSelected ?? false;
     lightOrientation = widget.lightOrientation ?? FLightOrientation.LeftTop;
-    controlType = widget.controlType ?? FType.Button;
+//    controlType = widget.controlType ?? FType.Button;
     currentSurface = widget.surface ?? FSurface.Flat;
 
 //    if (controlType == FType.Toggle) {
