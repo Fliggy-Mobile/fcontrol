@@ -2,11 +2,10 @@ name: fcontrol
 description: A new Flutter plugin.
 version: 1.0.0
 author:
-homepage:
+homepage: https://github.com/Fliggy-Mobile/fcontrol
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
-  flutter: ">=1.10.0"
 
 dependencies:
   flutter:
