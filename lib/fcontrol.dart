@@ -154,18 +154,18 @@ class FControlState extends State<FControl> {
 
   bool _hovering = false;
 
-  MouseCursor effectiveMouseCursor;
+//  MouseCursor effectiveMouseCursor;
 
   @override
   void initState() {
-    effectiveMouseCursor = MaterialStateProperty.resolveAs<MouseCursor>(
-      MaterialStateMouseCursor.clickable,
-      <MaterialState>{
-        if (disabled) MaterialState.disabled,
-        if (_hovering) MaterialState.hovered,
-//        if (_hasFocus) MaterialState.focused,
-      },
-    );
+//    effectiveMouseCursor = MaterialStateProperty.resolveAs<MouseCursor>(
+//      MaterialStateMouseCursor.clickable,
+//      <MaterialState>{
+//        if (disabled) MaterialState.disabled,
+//        if (_hovering) MaterialState.hovered,
+////        if (_hasFocus) MaterialState.focused,
+//      },
+//    );
     controlState = FState.Normal;
     appearance = widget.appearance ?? FAppearance.Flat;
     supportDropShadow = widget.supportDropShadow ?? true;
@@ -245,7 +245,7 @@ class FControlState extends State<FControl> {
       return createCoreControl();
     }
     return MouseRegion(
-      cursor: effectiveMouseCursor,
+//      cursor: effectiveMouseCursor,
       onEnter: _handleMouseEnter,
       onExit: _handleMouseExit,
       child: GestureDetector(
