@@ -10,12 +10,12 @@ class FControl extends StatefulWidget {
   final String componentId;
 
   //组件宽高，不指定宽高的情况下，control的size会随内容变化而变化
-  final double width;
-  final double height;
+  final double? width;
+  final double? height;
 
   //组件的内外边距，默认均为0
-  final EdgeInsetsGeometry margin; //组件外边距
-  final EdgeInsetsGeometry padding; //组件内边距
+  final EdgeInsetsGeometry? margin; //组件外边距
+  final EdgeInsetsGeometry? padding; //组件内边距
 
   //组件视觉效果及外观设置
   //FAppearance，组件外观选项，支持三种外观，Flat（扁平风格）,Neumorphism（新拟态风格）,Material（材质风格）,
@@ -24,12 +24,12 @@ class FControl extends StatefulWidget {
   //FSurfaceForStateCallback 根据状态不同，返回不同的Surface
   //FShape 设置组件的边框及外形 支持RoundedRectangle（圆角）,ContinuousRectangle（连续弧度）,BeveledRectangle（斜角）三种形式
   //FShapeForStateCallback 根据状态不同，返回不同的Shape
-  final FAppearance appearance;
+  final FAppearance? appearance;
   final FLightOrientation lightOrientation;
   final FSurface surface;
-  final FSurfaceForStateCallback surfaceForCallback;
-  final FShape shape;
-  final FShapeForStateCallback shapeForStateCallback;
+  final FSurfaceForStateCallback? surfaceForCallback;
+  final FShape? shape;
+  final FShapeForStateCallback? shapeForStateCallback;
 
   //阴影设置
   //supportDropShadow 是否支持外阴影，默认为支持
@@ -47,10 +47,10 @@ class FControl extends StatefulWidget {
   //FGradientForStateCallback 根据状态不同，返回不同的Gradient
   //maskColor 蒙板颜色，主要用于风格中的一些视觉效果，大多数情况下不应该被修改
   final Color color;
-  final FColorForStateCallback colorForCallback;
-  final Gradient gradient;
-  final FGradientForStateCallback gradientForCallback;
-  final Color maskColor;
+  final FColorForStateCallback? colorForCallback;
+  final Gradient? gradient;
+  final FGradientForStateCallback? gradientForCallback;
+  final Color? maskColor;
 
   //组件的类型，组件支持的类型， Button,Toggle,
   //isSelected仅在controlType == Toggle的时候有效，可以通过设置isSelected来控制默认是否为“按下”状态
@@ -64,20 +64,20 @@ class FControl extends StatefulWidget {
 
   //子组件
   //FChildForStateCallback 子组件的callback方法，可以根据组件不同的状态来设置不同的子组件
-  final Widget child;
-  final FChildForStateCallback childForStateCallback;
+  final Widget? child;
+  final FChildForStateCallback? childForStateCallback;
 
-  final FGroupController controller;
+  final FGroupController? controller;
 
-  final FOnTapCallback onTapCallback; //最近被点击后的callback
-  final FOnTapDownCallback onTapDownCallback;
-  final FOnTapUpCallback onTapUpCallback;
-  final FOnTapCancelCallback onTapCancelCallback;
-  final ValueChanged<bool> onHover;
-  final Color hoverColor;
+  final FOnTapCallback? onTapCallback; //最近被点击后的callback
+  final FOnTapDownCallback? onTapDownCallback;
+  final FOnTapUpCallback? onTapUpCallback;
+  final FOnTapCancelCallback? onTapCancelCallback;
+  final ValueChanged<bool>? onHover;
+  final Color? hoverColor;
 
   const FControl({
-    Key key,
+    Key? key,
     this.componentId = "componentId", //默认的componentId
     this.width,
     this.height,
@@ -120,26 +120,26 @@ class FControl extends StatefulWidget {
 }
 
 class FControlState extends State<FControl> {
-  FState controlState;
+  late FState controlState;
 
-  Color defaultColor;
-  Color currentColor;
+  Color? defaultColor;
+  Color? currentColor;
 
-  Gradient defaultGradient;
-  Gradient currentGradient;
+  Gradient? defaultGradient;
+  Gradient? currentGradient;
 
 
-  Widget defaultWidget;
-  Widget currentWidget;
+  Widget? defaultWidget;
+  Widget? currentWidget;
 
-  Border defaultBorder;
-  Border currentBorder;
+  Border? defaultBorder;
+  Border? currentBorder;
 
-  FShape defaultShape;
-  FShape currentShape;
+  FShape? defaultShape;
+  FShape? currentShape;
 
-  FSurface defaultSurface;
-  FSurface currentSurface;
+  FSurface? defaultSurface;
+  FSurface? currentSurface;
 
   bool isSelected = false;
   bool disabled = false;
@@ -150,7 +150,7 @@ class FControlState extends State<FControl> {
   FAppearance appearance = FAppearance.Flat;
   FLightOrientation lightOrientation = FLightOrientation.LeftTop;
 
-  Color maskColor;
+  Color? maskColor;
 
   bool _hovering = false;
 
@@ -177,7 +177,7 @@ class FControlState extends State<FControl> {
     defaultGradient = widget.gradient;
 
     if (widget.controller != null) {
-      widget.controller.states.add(this);
+      widget.controller!.states.add(this);
     }
 
     isSelected = widget.isSelected ?? false;
@@ -194,12 +194,12 @@ class FControlState extends State<FControl> {
     }
 
     if (widget.colorForCallback != null) {
-      currentColor = widget.colorForCallback(widget, controlState);
+      currentColor = widget.colorForCallback!(widget, controlState!);
     }
     currentColor = currentColor ?? defaultColor;
 
     if (widget.gradientForCallback != null) {
-      currentGradient = widget.gradientForCallback(widget, controlState);
+      currentGradient = widget.gradientForCallback!(widget, controlState!);
     }
     currentGradient = currentGradient ?? defaultGradient;
 
@@ -215,13 +215,13 @@ class FControlState extends State<FControl> {
 
     defaultWidget = widget.child;
     if (widget.childForStateCallback != null) {
-      currentWidget = widget.childForStateCallback(widget, controlState);
+      currentWidget = widget.childForStateCallback!(widget, controlState!);
     }
     currentWidget = currentWidget ?? defaultWidget;
 
     defaultSurface = widget.surface;
     if (widget.surfaceForCallback != null) {
-      currentSurface = widget.surfaceForCallback(widget, controlState);
+      currentSurface = widget.surfaceForCallback!(widget, controlState!);
     }
 
     currentSurface = currentSurface ?? defaultSurface;
@@ -254,7 +254,7 @@ class FControlState extends State<FControl> {
             controlState = FState.Highlighted;
           } else {
             if (widget.controller != null &&
-                widget.controller.mustBeSelected &&
+                widget.controller!.mustBeSelected &&
                 isSelected) {
               return;
             }
@@ -263,12 +263,12 @@ class FControlState extends State<FControl> {
           }
           _controlGestureHandlerForState();
           if (widget.onTapDownCallback != null) {
-            widget.onTapDownCallback(widget, isSelected);
+            widget.onTapDownCallback!(widget, isSelected);
           }
         },
         onTapUp: (details) {
           if (widget.onTapUpCallback != null) {
-            widget.onTapUpCallback(widget, isSelected);
+            widget.onTapUpCallback!(widget, isSelected);
           }
         },
         onTapCancel: () {
@@ -280,7 +280,7 @@ class FControlState extends State<FControl> {
           }
           _controlGestureHandlerForState();
           if (widget.onTapCancelCallback != null) {
-            widget.onTapCancelCallback(widget, isSelected);
+            widget.onTapCancelCallback!(widget, isSelected);
           }
         },
         onTap: () {
@@ -291,11 +291,11 @@ class FControlState extends State<FControl> {
             controlState =
             isSelected ? FState.Highlighted : FState.Normal;
             if (widget.controller != null &&
-                widget.controller.states.length > 0) {
-              List<Widget> all = List();
-              Widget changed;
-              for (int i = 0; i < widget.controller.states.length; i++) {
-                FControlState state = widget.controller.states[i];
+                widget.controller!.states.length > 0) {
+              List<Widget> all = [];
+              Widget? changed;
+              for (int i = 0; i < widget.controller!.states.length; i++) {
+                FControlState state = widget.controller!.states[i] as FControlState;
                 all.add(state.widget);
                 if (state != this) {
                   if (state.isSelected == false &&
@@ -310,15 +310,15 @@ class FControlState extends State<FControl> {
                   _controlGestureHandlerForState();
                 }
               }
-              if (widget.controller.groupClickCallback != null) {
-                widget.controller.groupClickCallback(changed, isSelected, all);
+              if (widget.controller!.groupClickCallback != null) {
+                widget.controller!.groupClickCallback!(changed, isSelected, all);
               }
             } else {
               _controlGestureHandlerForState();
             }
           }
           if (widget.onTapCallback != null) {
-            widget.onTapCallback(widget, isSelected);
+            widget.onTapCallback!(widget, isSelected);
           }
         },
         child: createCoreControl(),
@@ -350,15 +350,15 @@ class FControlState extends State<FControl> {
       decoration: ShapeDecoration(
         color: (currentGradient != null) ? null : currentColor,
         gradient: currentGradient ?? defaultGradient,
-        shape: _createShapeBorder(controlState, false),
+        shape: _createShapeBorder(controlState!, false),
         shadows: _createDropShadowList(
-            controlState, widget.dropShadow, supportDropShadow),
+            controlState!, widget.dropShadow, supportDropShadow),
       ),
       foregroundDecoration: ShapeDecoration(
-        shape: _createShapeBorder(controlState, false),
+        shape: _createShapeBorder(controlState!, false),
       ),
       child: _createChildContainer(
-          controlState, widget.lightOrientation, widget.innerShadow),
+          controlState!, widget.lightOrientation, widget.innerShadow),
     );
   }
 
@@ -438,7 +438,7 @@ class FControlState extends State<FControl> {
   void _updateState() {
     if (widget.colorForCallback != null) {
       currentColor =
-          widget.colorForCallback(widget, controlState) ?? defaultColor;
+          widget.colorForCallback!(widget, controlState) ?? defaultColor;
       if (controlState == FState.Normal && widget.hoverColor != null && _hovering) {
           currentColor = widget.hoverColor;
       }
@@ -446,22 +446,22 @@ class FControlState extends State<FControl> {
     
     if (widget.gradientForCallback != null) {
       currentGradient =
-          widget.gradientForCallback(widget, controlState) ?? defaultGradient;
+          widget.gradientForCallback!(widget, controlState) ?? defaultGradient;
     }
     
     if (widget.childForStateCallback != null) {
       currentWidget =
-          widget.childForStateCallback(widget, controlState) ?? defaultWidget;
+          widget.childForStateCallback!(widget, controlState) ?? defaultWidget;
     }
     
     if (widget.surfaceForCallback != null) {
       currentSurface =
-          widget.surfaceForCallback(widget, controlState) ?? defaultSurface;
+          widget.surfaceForCallback!(widget, controlState) ?? defaultSurface;
     }
     
     if (widget.shapeForStateCallback != null) {
       currentShape =
-          widget.shapeForStateCallback(widget, controlState) ?? defaultShape;
+          widget.shapeForStateCallback!(widget, controlState) ?? defaultShape;
     }
   }
 
@@ -469,34 +469,34 @@ class FControlState extends State<FControl> {
   ShapeBorder _createShapeBorder(FState state, bool justShape) {
     if (widget.shapeForStateCallback != null) {
       currentShape =
-          widget.shapeForStateCallback(widget, state) ?? defaultShape;
+          widget.shapeForStateCallback!(widget, state) ?? defaultShape;
     } else {
       currentShape = defaultShape;
     }
     // justShape = false;
 
-    switch (currentShape.borderShape) {
+    switch (currentShape!.borderShape) {
       case FBorderShape.BeveledRectangle:
         return BeveledRectangleBorder(
-          borderRadius: currentShape.borderRadius,
-          side: justShape ? BorderSide.none : currentShape.side,
+          borderRadius: currentShape!.borderRadius,
+          side: justShape ? BorderSide.none : currentShape!.side,
         );
       case FBorderShape.ContinuousRectangle:
         return ContinuousRectangleBorder(
-          borderRadius: currentShape.borderRadius,
-          side: justShape ? BorderSide.none : currentShape.side,
+          borderRadius: currentShape!.borderRadius,
+          side: justShape ? BorderSide.none : currentShape!.side,
         );
       default:
         return RoundedRectangleBorder(
-          borderRadius: currentShape.borderRadius,
-          side: justShape ? BorderSide.none : currentShape.side,
+          borderRadius: currentShape!.borderRadius,
+          side: justShape ? BorderSide.none : currentShape!.side,
         );
     }
   }
 
   List<BoxShadow> _createDropShadowList(
       FState state, FShadow dropShadow, bool canUseShadow) {
-    List<BoxShadow> shadows = List();
+    List<BoxShadow> shadows = [];
     switch (appearance) {
       case FAppearance.Flat: //扁平风格，忽略所有阴影效果
         break;
@@ -598,7 +598,6 @@ class FControlState extends State<FControl> {
         }
         return offset;
     }
-    return null;
   }
 
   Color _innerShadowColor(
@@ -659,12 +658,9 @@ class FControlState extends State<FControl> {
           return offset;
         }
     }
-    return isBacklight
-        ? Offset(backlightDistance, backlightDistance)
-        : Offset(-forwardlightDistance, -forwardlightDistance);
   }
 
-  ShapeDecoration _createSurfaceShape() {
+  ShapeDecoration? _createSurfaceShape() {
     Color surfaceShadowColor = Colors.black26;
     switch (currentSurface) {
       case FSurface.Flat:
@@ -712,14 +708,6 @@ class FControlState extends State<FControl> {
                   end: Alignment.topRight),
             );
         }
-        return ShapeDecoration(
-          shape: _createShapeBorder(controlState, true),
-          gradient: LinearGradient(
-              colors: [Colors.transparent, surfaceShadowColor],
-              stops: [0.4, 1.0],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight),
-        );
       case FSurface.Concave:
         switch (lightOrientation) {
           case FLightOrientation.LeftTop:
@@ -782,7 +770,7 @@ class FControlState extends State<FControl> {
       controlState = FState.Normal;
     }
     if(widget.colorForCallback != null){
-      defaultColor = widget.colorForCallback(widget, controlState) ?? widget.color;
+      defaultColor = widget.colorForCallback!(widget, controlState) ?? widget.color;
     }
     defaultColor = defaultColor ?? FPrimerColor;
     appearance = widget.appearance ?? FAppearance.Flat;
@@ -795,7 +783,7 @@ class FControlState extends State<FControl> {
     }
     currentWidget = defaultWidget;
     if(widget.childForStateCallback != null){
-      currentWidget = widget.childForStateCallback(widget, controlState);
+      currentWidget = widget.childForStateCallback!(widget, controlState);
     }
     currentWidget = currentWidget ?? defaultWidget;
     currentGradient = currentGradient ?? defaultGradient;
@@ -826,7 +814,7 @@ class FControlState extends State<FControl> {
 //    }
 
     if (widget.surfaceForCallback != null) {
-      currentSurface = widget.surfaceForCallback(widget, controlState);
+      currentSurface = widget.surfaceForCallback!(widget, controlState);
       currentSurface = currentSurface ?? (widget.surface ?? FSurface.Flat);
     }
     super.didUpdateWidget(oldWidget);
@@ -834,7 +822,7 @@ class FControlState extends State<FControl> {
 
   void dispose() {
     if (widget.controller != null) {
-      widget.controller.states.remove(this);
+      widget.controller!.states.remove(this);
     }
     super.dispose();
   }

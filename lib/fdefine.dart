@@ -24,7 +24,7 @@ class FShadow {
   final double shadowDistance;
   final double shadowBlur;
   final double shadowSpread;
-  final Offset shadowOffset;
+  final Offset? shadowOffset;
 
   const FShadow({
     this.highlightColor = FHighlightShadowColor,
@@ -75,11 +75,11 @@ enum FCornerStyle {
 }
 
 typedef FGroupContorllerClickCallback = List<Color> Function(
-    Widget stateChanged, bool selected, List<Widget> widgets);
+    Widget? stateChanged, bool selected, List<Widget> widgets);
 
 class FGroupController {
-  final List<State> states = List();
-  final FGroupContorllerClickCallback groupClickCallback;
+  final List<State> states = [];
+  final FGroupContorllerClickCallback? groupClickCallback;
   final bool mustBeSelected;
   FGroupController({this.mustBeSelected = false, this.groupClickCallback});
 }

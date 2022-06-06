@@ -10,11 +10,11 @@ class FInnerShadow extends SingleChildRenderObjectWidget {
   final Color color;
   final Offset offset;
   FInnerShadow({
-    Key key,
+    Key? key,
     this.blur = 10,
     this.color = FInnerShadowColor,
     this.offset = FInnerShadowOffset,
-    Widget child,
+    Widget? child,
   }) : super(key: key, child: child);
 
   @override
@@ -36,10 +36,10 @@ class FInnerShadow extends SingleChildRenderObjectWidget {
 }
 
 class _ZenUIRenderInnerShadow extends RenderProxyBox {
-  double blur;
-  Color color;
-  double dx;
-  double dy;
+  double? blur;
+  Color? color;
+  double? dx;
+  double? dy;
 
   @override
   void paint(PaintingContext context, Offset offset) {
@@ -52,16 +52,16 @@ class _ZenUIRenderInnerShadow extends RenderProxyBox {
       size.height,
     );
     final Canvas canvas = context.canvas..saveLayer(rectOuter, Paint());
-    context.paintChild(child, offset);
+    context.paintChild(child!, offset);
     Paint shadowPaint = Paint()
       ..blendMode = BlendMode.srcATop
-      ..imageFilter = ImageFilter.blur(sigmaX: blur, sigmaY: blur)
-      ..colorFilter = ColorFilter.mode(color, BlendMode.srcOut);
+      ..imageFilter = ImageFilter.blur(sigmaX: blur ?? 0, sigmaY: blur ?? 0)
+      ..colorFilter = ColorFilter.mode(color ?? Colors.white, BlendMode.srcOut);
     canvas
       ..saveLayer(rectOuter, shadowPaint)
       ..saveLayer(rectInner, Paint())
-      ..translate(dx, dy);
-    context.paintChild(child, offset);
+      ..translate(dx ?? 0, dy ?? 0);
+    context.paintChild(child!, offset);
     context.canvas..restore()..restore()..restore();
   }
 }
