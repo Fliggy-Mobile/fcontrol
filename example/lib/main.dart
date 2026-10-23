@@ -42,7 +42,6 @@ class _MyHomePageState extends State<MyHomePage> {
               width: 200,
               height: 80,
               color: _color,
-              corner: FCorner.all(16),
               onTapCallback: (_, __) {
                 setState(() {
                   _color = _color == Colors.blue ? Colors.purple : Colors.blue;
@@ -62,7 +61,6 @@ class _MyHomePageState extends State<MyHomePage> {
               gradient: const LinearGradient(
                 colors: [Colors.lightBlueAccent, Colors.blue],
               ),
-              corner: FCorner.all(16),
               child: const Center(
                 child: Text(
                   'Gradient',

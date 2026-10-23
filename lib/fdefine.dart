@@ -7,9 +7,9 @@ class FShape {
   final BorderSide side;
 
   const FShape({
-    this.borderShape: FBorderShape.RoundedRectangle,
-    this.borderRadius: const BorderRadius.all(Radius.circular(10)),
-    this.side: const BorderSide(
+    this.borderShape = FBorderShape.RoundedRectangle,
+    this.borderRadius = const BorderRadius.all(Radius.circular(10)),
+    this.side = const BorderSide(
         color: Colors.transparent, style: BorderStyle.solid, width: 0),
   });
 }
@@ -78,7 +78,7 @@ typedef FGroupContorllerClickCallback = List<Color> Function(
     Widget? stateChanged, bool selected, List<Widget> widgets);
 
 class FGroupController {
-  final List<State> states = List();
+  final List<State> states = [];
   final FGroupContorllerClickCallback? groupClickCallback;
   final bool mustBeSelected;
   FGroupController({this.mustBeSelected = false, this.groupClickCallback});

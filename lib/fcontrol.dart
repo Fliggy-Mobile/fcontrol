@@ -292,7 +292,7 @@ class FControlState extends State<FControl> {
             isSelected ? FState.Highlighted : FState.Normal;
             if (widget.controller != null &&
                 widget.controller!.states.length > 0) {
-              List<Widget> all = List();
+              List<Widget> all = [];
               Widget? changed;
               for (int i = 0; i < widget.controller!.states.length; i++) {
                 FControlState state = widget.controller!.states[i] as FControlState;
@@ -496,7 +496,7 @@ class FControlState extends State<FControl> {
 
   List<BoxShadow> _createDropShadowList(
       FState? state, FShadow dropShadow, bool canUseShadow) {
-    List<BoxShadow> shadows = List();
+    List<BoxShadow> shadows = [];
     switch (appearance) {
       case FAppearance.Flat: //扁平风格，忽略所有阴影效果
         break;
@@ -763,6 +763,9 @@ class FControlState extends State<FControl> {
               end: Alignment.bottomRight),
         );
     }
+    return ShapeDecoration(
+        shape: _createShapeBorder(controlState, true),
+        color: Colors.transparent);
   }
 
   //============> 重载部分生存周期函数，用于不同状态的变化响应
