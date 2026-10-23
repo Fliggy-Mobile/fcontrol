@@ -24,7 +24,7 @@ class FShadow {
   final double shadowDistance;
   final double shadowBlur;
   final double shadowSpread;
-  final Offset shadowOffset;
+  final Offset? shadowOffset;
 
   const FShadow({
     this.highlightColor = FHighlightShadowColor,
@@ -75,11 +75,11 @@ enum FCornerStyle {
 }
 
 typedef FGroupContorllerClickCallback = List<Color> Function(
-    Widget stateChanged, bool selected, List<Widget> widgets);
+    Widget? stateChanged, bool selected, List<Widget> widgets);
 
 class FGroupController {
   final List<State> states = List();
-  final FGroupContorllerClickCallback groupClickCallback;
+  final FGroupContorllerClickCallback? groupClickCallback;
   final bool mustBeSelected;
   FGroupController({this.mustBeSelected = false, this.groupClickCallback});
 }
@@ -127,19 +127,19 @@ enum FType {
 }
 
 typedef FColorForStateCallback = Color Function(
-    Widget sender, FState state);
+    Widget sender, FState? state);
 typedef FGradientForStateCallback = Gradient Function(
-    Widget sender, FState state);
+    Widget sender, FState? state);
 typedef FBorderForStateCallback = Border Function(
     Widget sender, FState state);
 typedef FChildForStateCallback = Widget Function(
-    Widget sender, FState state);
+    Widget sender, FState? state);
 typedef FTapEventForStateCallback = void Function(
     Widget sender, FState state, bool checked);
 typedef FShapeForStateCallback = FShape Function(
-    Widget sender, FState state);
+    Widget sender, FState? state);
 typedef FSurfaceForStateCallback = FSurface Function(
-    Widget sender, FState state);
+    Widget sender, FState? state);
 
 typedef FOnTapCallback = void Function(Widget sender, bool checked);
 typedef FOnTapDownCallback = void Function(Widget sender, bool checked);

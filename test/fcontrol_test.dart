@@ -1,23 +1,15 @@
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fcontrol/fcontrol.dart';
+import 'package:fcontrol/fdefine.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('fcontrol');
-
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  setUp(() {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      return '42';
-    });
+  test('FShape defaults', () {
+    const shape = FShape();
+    expect(shape.borderShape, FBorderShape.RoundedRectangle);
   });
 
-  tearDown(() {
-    channel.setMockMethodCallHandler(null);
-  });
-
-  test('getPlatformVersion', () async {
-//    expect(await FControl.platformVersion, '42');
+  test('FCorner.all sets all corners', () {
+    final corner = FCorner.all(8);
+    expect(corner.leftTopCorner, 8);
+    expect(corner.rightBottomCorner, 8);
   });
 }

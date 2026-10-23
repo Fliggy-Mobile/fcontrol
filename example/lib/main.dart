@@ -1,84 +1,78 @@
-import 'package:fbutton/fbutton.dart';
 import 'package:fcontrol/fcontrol.dart';
-import 'package:fcontrol/finnershadow.dart';
+import 'package:fcontrol/fdefine.dart';
 import 'package:flutter/material.dart';
-import 'package:fsuper/fsuper.dart';
 
 void main() {
-  // debugProfilePaintsEnabled = true;
-  debugProfileBuildsEnabled = true;
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      home: MyHomePage(title: 'Neumorphism.io'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double fcontrolsize = 200;
-  Color color = Colors.blue;
-  Color backgroundColor = Colors.white;
-
-  void initState() {
-    super.initState();
-  }
+  Color _color = Colors.blue;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-//        backgroundColor: Color.fromARGB(255, 85, 185, 243),
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: Column(
+      appBar: AppBar(
+        title: const Text('FControl Demo'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Center(
-                child: FControl(
-                  color: backgroundColor,
-                  child: FSuper(
-                    width: 100,
-                    height: 100,
-                    corner: Corner.all(100),
-                    backgroundColor: Colors.blue,
-                  ),
+            FControl(
+              width: 200,
+              height: 80,
+              color: _color,
+              corner: FCorner.all(16),
+              onTapCallback: (_, __) {
+                setState(() {
+                  _color = _color == Colors.blue ? Colors.purple : Colors.blue;
+                });
+              },
+              child: const Center(
+                child: Text(
+                  'Tap me',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
             ),
-            const SizedBox(height: 50.0),
-            FButton(
-              text: "Change",
-              style: TextStyle(color: Colors.white),
-              padding: EdgeInsets.all(9.0),
-              color: Colors.blue[200],
-              onPressed: () {
-                setState(() {
-                  color = Colors.purple;
-                  backgroundColor = Colors.yellow;
-                });
-              },
-              effect: true,
+            const SizedBox(height: 50),
+            FControl(
+              width: 200,
+              height: 80,
+              gradient: const LinearGradient(
+                colors: [Colors.lightBlueAccent, Colors.blue],
+              ),
+              corner: FCorner.all(16),
+              child: const Center(
+                child: Text(
+                  'Gradient',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ),
             ),
-            const SizedBox(height: 50.0),
           ],
-        ));
+        ),
+      ),
+    );
   }
 }

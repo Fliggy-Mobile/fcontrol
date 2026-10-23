@@ -1,0 +1,5 @@
+include: package:fliggy_flutter_lint/lint_options.yaml
+
+analyzer:
+  plugins:
+    - fliggy_flutter_lint
