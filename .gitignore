@@ -21,3 +21,4 @@ macos/
 web/
 
 readme.py
+.fflutter_build/
