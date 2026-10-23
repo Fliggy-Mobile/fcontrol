@@ -7,9 +7,9 @@ class FShape {
   final BorderSide side;
 
   const FShape({
-    this.borderShape: FBorderShape.RoundedRectangle,
-    this.borderRadius: const BorderRadius.all(Radius.circular(10)),
-    this.side: const BorderSide(
+    this.borderShape = FBorderShape.RoundedRectangle,
+    this.borderRadius = const BorderRadius.all(Radius.circular(10)),
+    this.side = const BorderSide(
         color: Colors.transparent, style: BorderStyle.solid, width: 0),
   });
 }
@@ -127,19 +127,19 @@ enum FType {
 }
 
 typedef FColorForStateCallback = Color Function(
-    Widget sender, FState state);
+    Widget sender, FState? state);
 typedef FGradientForStateCallback = Gradient Function(
-    Widget sender, FState state);
+    Widget sender, FState? state);
 typedef FBorderForStateCallback = Border Function(
     Widget sender, FState state);
 typedef FChildForStateCallback = Widget Function(
-    Widget sender, FState state);
+    Widget sender, FState? state);
 typedef FTapEventForStateCallback = void Function(
     Widget sender, FState state, bool checked);
 typedef FShapeForStateCallback = FShape Function(
-    Widget sender, FState state);
+    Widget sender, FState? state);
 typedef FSurfaceForStateCallback = FSurface Function(
-    Widget sender, FState state);
+    Widget sender, FState? state);
 
 typedef FOnTapCallback = void Function(Widget sender, bool checked);
 typedef FOnTapDownCallback = void Function(Widget sender, bool checked);

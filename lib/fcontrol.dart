@@ -120,7 +120,7 @@ class FControl extends StatefulWidget {
 }
 
 class FControlState extends State<FControl> {
-  late FState controlState;
+  FState? controlState;
 
   Color? defaultColor;
   Color? currentColor;
@@ -154,18 +154,18 @@ class FControlState extends State<FControl> {
 
   bool _hovering = false;
 
-//  MouseCursor effectiveMouseCursor;
+  late MouseCursor effectiveMouseCursor;
 
   @override
   void initState() {
-//    effectiveMouseCursor = MaterialStateProperty.resolveAs<MouseCursor>(
-//      MaterialStateMouseCursor.clickable,
-//      <MaterialState>{
-//        if (disabled) MaterialState.disabled,
-//        if (_hovering) MaterialState.hovered,
-////        if (_hasFocus) MaterialState.focused,
-//      },
-//    );
+    effectiveMouseCursor = MaterialStateProperty.resolveAs<MouseCursor>(
+      MaterialStateMouseCursor.clickable,
+      <MaterialState>{
+        if (disabled) MaterialState.disabled,
+        if (_hovering) MaterialState.hovered,
+//        if (_hasFocus) MaterialState.focused,
+      },
+    );
     controlState = FState.Normal;
     appearance = widget.appearance ?? FAppearance.Flat;
     supportDropShadow = widget.supportDropShadow ?? true;
@@ -194,12 +194,12 @@ class FControlState extends State<FControl> {
     }
 
     if (widget.colorForCallback != null) {
-      currentColor = widget.colorForCallback!(widget, controlState!);
+      currentColor = widget.colorForCallback!(widget, controlState);
     }
     currentColor = currentColor ?? defaultColor;
 
     if (widget.gradientForCallback != null) {
-      currentGradient = widget.gradientForCallback!(widget, controlState!);
+      currentGradient = widget.gradientForCallback!(widget, controlState);
     }
     currentGradient = currentGradient ?? defaultGradient;
 
@@ -215,13 +215,13 @@ class FControlState extends State<FControl> {
 
     defaultWidget = widget.child;
     if (widget.childForStateCallback != null) {
-      currentWidget = widget.childForStateCallback!(widget, controlState!);
+      currentWidget = widget.childForStateCallback!(widget, controlState);
     }
     currentWidget = currentWidget ?? defaultWidget;
 
     defaultSurface = widget.surface;
     if (widget.surfaceForCallback != null) {
-      currentSurface = widget.surfaceForCallback!(widget, controlState!);
+      currentSurface = widget.surfaceForCallback!(widget, controlState);
     }
 
     currentSurface = currentSurface ?? defaultSurface;
@@ -245,7 +245,7 @@ class FControlState extends State<FControl> {
       return createCoreControl();
     }
     return MouseRegion(
-//      cursor: effectiveMouseCursor,
+      cursor: effectiveMouseCursor,
       onEnter: _handleMouseEnter,
       onExit: _handleMouseExit,
       child: GestureDetector(
@@ -350,19 +350,19 @@ class FControlState extends State<FControl> {
       decoration: ShapeDecoration(
         color: (currentGradient != null) ? null : currentColor,
         gradient: currentGradient ?? defaultGradient,
-        shape: _createShapeBorder(controlState!, false),
+        shape: _createShapeBorder(controlState, false),
         shadows: _createDropShadowList(
-            controlState!, widget.dropShadow, supportDropShadow),
+            controlState, widget.dropShadow, supportDropShadow),
       ),
       foregroundDecoration: ShapeDecoration(
-        shape: _createShapeBorder(controlState!, false),
+        shape: _createShapeBorder(controlState, false),
       ),
       child: _createChildContainer(
-          controlState!, widget.lightOrientation, widget.innerShadow),
+          controlState, widget.lightOrientation, widget.innerShadow),
     );
   }
 
-  Widget _createChildContainer(FState state,
+  Widget _createChildContainer(FState? state,
       FLightOrientation lightOrientation, FShadow innerShadow) {
     switch (appearance) {
       case FAppearance.Flat: //扁平风格，忽略所有阴影效果
@@ -466,7 +466,7 @@ class FControlState extends State<FControl> {
   }
 
   //处理边框
-  ShapeBorder _createShapeBorder(FState state, bool justShape) {
+  ShapeBorder _createShapeBorder(FState? state, bool justShape) {
     if (widget.shapeForStateCallback != null) {
       currentShape =
           widget.shapeForStateCallback!(widget, state) ?? defaultShape;
@@ -495,7 +495,7 @@ class FControlState extends State<FControl> {
   }
 
   List<BoxShadow> _createDropShadowList(
-      FState state, FShadow dropShadow, bool canUseShadow) {
+      FState? state, FShadow dropShadow, bool canUseShadow) {
     List<BoxShadow> shadows = [];
     switch (appearance) {
       case FAppearance.Flat: //扁平风格，忽略所有阴影效果
@@ -510,7 +510,7 @@ class FControlState extends State<FControl> {
         shadows.add(BoxShadow(
           color: dropShadow.shadowColor,
           offset: dropShadow.shadowOffset ?? _dropShadowOffset(
-              appearance, lightOrientation, state, true, dropShadow),
+              appearance, lightOrientation, state, true, dropShadow)!,
           blurRadius: dropShadow.shadowBlur,
           spreadRadius: dropShadow.shadowSpread,
         ));
@@ -525,7 +525,7 @@ class FControlState extends State<FControl> {
         shadows.add(BoxShadow(
           color: dropShadow.highlightColor,
           offset: _dropShadowOffset(
-              appearance, lightOrientation, state, true, dropShadow),
+              appearance, lightOrientation, state, true, dropShadow)!,
           blurRadius:
           (state == FState.Highlighted) ? 0 : dropShadow.highlightBlur,
           spreadRadius: (state == FState.Highlighted)
@@ -535,7 +535,7 @@ class FControlState extends State<FControl> {
         shadows.add(BoxShadow(
           color: dropShadow.shadowColor,
           offset: _dropShadowOffset(
-              appearance, lightOrientation, state, false, dropShadow),
+              appearance, lightOrientation, state, false, dropShadow)!,
           blurRadius:
           (state == FState.Highlighted) ? 0 : dropShadow.shadowBlur,
           spreadRadius:
@@ -545,10 +545,10 @@ class FControlState extends State<FControl> {
     return shadows;
   }
 
-  Offset _dropShadowOffset(
+  Offset? _dropShadowOffset(
       FAppearance appearance, //外观风格
       FLightOrientation lightOrientation, //光源方向，在FControlAppearance.Flat时无效
-      FState state, //控件状态
+      FState? state, //控件状态
       bool isHighlight, //当前是否处理高光，仅在FControlAppearance.Neumorphism时有效
       FShadow shadow) {
     //光影效果定义，仅在FControlAppearance.Neumorphism且isHighlight=true时处理高光
@@ -598,10 +598,11 @@ class FControlState extends State<FControl> {
         }
         return offset;
     }
+    return null;
   }
 
   Color _innerShadowColor(
-      bool isBacklight, FState state, FShadow innerShadow) {
+      bool isBacklight, FState? state, FShadow innerShadow) {
     if (state == FState.Normal || state == FState.Disable) {
       return Color.fromARGB(0, 0, 0, 0);
     } else {
@@ -610,7 +611,7 @@ class FControlState extends State<FControl> {
   }
 
   Offset _innerShadowOffset(
-      bool isBacklight, FState state, FShadow innerShadow) {
+      bool isBacklight, FState? state, FShadow innerShadow) {
     double forwardlightDistance = innerShadow.highlightDistance.abs();
     double backlightDistance = innerShadow.shadowDistance.abs();
     switch (lightOrientation) {
@@ -658,9 +659,12 @@ class FControlState extends State<FControl> {
           return offset;
         }
     }
+    return isBacklight
+        ? Offset(backlightDistance, backlightDistance)
+        : Offset(-forwardlightDistance, -forwardlightDistance);
   }
 
-  ShapeDecoration? _createSurfaceShape() {
+  ShapeDecoration _createSurfaceShape() {
     Color surfaceShadowColor = Colors.black26;
     switch (currentSurface) {
       case FSurface.Flat:
@@ -708,6 +712,14 @@ class FControlState extends State<FControl> {
                   end: Alignment.topRight),
             );
         }
+        return ShapeDecoration(
+          shape: _createShapeBorder(controlState, true),
+          gradient: LinearGradient(
+              colors: [Colors.transparent, surfaceShadowColor],
+              stops: [0.4, 1.0],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight),
+        );
       case FSurface.Concave:
         switch (lightOrientation) {
           case FLightOrientation.LeftTop:
@@ -751,12 +763,13 @@ class FControlState extends State<FControl> {
               end: Alignment.bottomRight),
         );
     }
+    return ShapeDecoration(
+        shape: _createShapeBorder(controlState, true),
+        color: Colors.transparent);
   }
 
   //============> 重载部分生存周期函数，用于不同状态的变化响应
   void didUpdateWidget(FControl oldWidget) {
-    isSelected = widget.isSelected ?? false;
-    controlType = widget.controlType ?? FType.Button;
     disabled = widget.disabled ?? false;
     defaultColor = widget.color;
     if (disabled) {
@@ -799,9 +812,9 @@ class FControlState extends State<FControl> {
     defaultShape = widget.shape ?? FShape();
     supportDropShadow = widget.supportDropShadow ?? true;
     maskColor = widget.maskColor ?? Colors.black12;
-//    isSelected = widget.isSelected ?? false;
+    isSelected = widget.isSelected ?? false;
     lightOrientation = widget.lightOrientation ?? FLightOrientation.LeftTop;
-//    controlType = widget.controlType ?? FType.Button;
+    controlType = widget.controlType ?? FType.Button;
     currentSurface = widget.surface ?? FSurface.Flat;
 
 //    if (controlType == FType.Toggle) {
